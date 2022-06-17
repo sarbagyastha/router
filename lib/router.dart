@@ -2,8 +2,16 @@ import 'package:go_router/go_router.dart';
 import 'package:router/first_page.dart';
 import 'package:router/second_page.dart';
 
+int count = 1;
+
+final stream = Stream.periodic(
+  const Duration(seconds: 1),
+  (computationCount) => count = computationCount,
+);
+
 final router = GoRouter(
   initialLocation: '/first',
+  refreshListenable: GoRouterRefreshStream(stream),
   routes: [
     GoRoute(
       path: '/first',
@@ -16,12 +24,12 @@ final router = GoRouter(
         queryParams: state.queryParams,
         extra: state.extra,
       ),
-      redirect: (state) {
-        print(state.location);
-        print(state.queryParams);
-        print(state.extra);
-        return null;
-      },
     ),
   ],
+  redirect: (state) {
+    print(state.location);
+    print('Called $count times.');
+
+    return null;
+  },
 );
